@@ -15,7 +15,7 @@ setuptools.setup(
     # TODO: Update package dir placeholder
     package_dir={"": "urlchecker"},
     packages=setuptools.find_packages(where="urlchecker"),
-    install_requires=[],
+    install_requires=["sphinx", "furo"],
     python_requires=">=3.6",
     classifiers=[
         "Development Status :: 4 - Beta",
