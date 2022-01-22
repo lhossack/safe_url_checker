@@ -27,8 +27,8 @@ init: ${MAKEPATH}/requirements.txt
 	cd ${MAKEPATH} && ${VENV}/bin/pip install -r ${MAKEPATH}/requirements.txt && cd -
 
 test: init
-	@echo "\Running unit tests"
-	@echo 'make test not yet implemented - will run unittest tests'
+	@echo "\nRunning Unit Tests"
+	${VENV}/bin/python3 -m unittest discover -s ${MAKEPATH}/tests || true
 
 devserver: init
 	@echo "\nStarting development server"
