@@ -27,7 +27,15 @@ API Documentation
    :maxdepth: 2
    :caption: Contents:
 
+urlchecker
+----------
 .. automodule:: urlchecker.urlchecker
+    :members:
+
+
+databaseABC
+-----------
+.. automodule:: urlchecker.databaseABC
     :members:
 
 Indices and tables

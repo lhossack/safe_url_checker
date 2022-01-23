@@ -1,18 +1,16 @@
+"""Core business logic for checking databases of known malware"""
 from .databaseABC import DatabaseABC
 import typing
 
 class UrlChecker:
-    """Manages checking URLs against databases of URLs known to contain malware.
+    """Main entry-point for checking URLs against databases of URLs known to contain malware.
     
-    This is the main entry-point to the business logic for checking URLs
+    Registering a database adds the database to the list of databases checked for malware.
+
+    :param typing.Iterable[DatabaseABC] databases: An iterable of concrete subclasses of DatabaseABC to register to the urlchecker
+    :raises ValueError: In the case an invalid database adaptor is passed
     """
     def __init__(self, databases: typing.Iterable[DatabaseABC] = None) -> None:
-        """Initialize the UrlChecker, optionally with an iterable of databases
-
-        Registering a database adds the database to the list of databases checked for malware
-        :databases typing.Iterable[DatabaseABC]: An iterable of concrete subclasses of DatabaseABC to register to the urlchecker
-        :raises ValueError: In the case an invalid database adaptor is passed
-        """
         if not databases:
             self._databases = []
         else:
@@ -22,7 +20,12 @@ class UrlChecker:
     def check_url_has_malware(self, host_and_query: str):
         """Checks if URL is known to contain malware against all registered databases.
 
-        :param str host_and_query: Host and query in format: {hostname_and_port}/{original_path_and_query_string} That is, they don't contain the protocol (e.g. "https://" is trimmed), but may include ports: e.g. https://www.google.com/search/path?query=1&here=2 should be passed in as www.google.com:443/search/path?query=1&here=2
+        Input query strings are of the form: "{hostname_and_port}/{original_path_and_query_string}". 
+        That is, they don't contain the protocol (e.g. "https://" is trimmed), but may include 
+        ports: e.g. https://www.google.com/search/path?query=1&here=2 should be passed in as 
+        www.google.com:443/search/path?query=1&here=2
+
+        :param str host_and_query: Host and query
         :return: True if URL found to have malware in any database, False otherwise
         :rtype: bool
         """
@@ -38,7 +41,8 @@ class UrlChecker:
         """Register a database with the url checker.
 
         Registering a database adds the database to the list of databases checked for malware
-        :database DatabaseABC: A concrete subclass of DatabaseABC to register to the urlchecker
+
+        :param DatabaseABC database: A concrete subclass of DatabaseABC to register to the urlchecker
         :raises ValueError: In the case an invalid database adaptor is passed
         """
         if issubclass(type(database), DatabaseABC):
@@ -47,4 +51,9 @@ class UrlChecker:
             raise ValueError("Database is not an instance of DatabaseABC.")
 
     def get_db_count(self) -> int:
+        """Get the number of databases registered to the UrlChecker
+        
+        :return: total number of databases registered
+        :rtype: int
+        """
         return len(self._databases)
