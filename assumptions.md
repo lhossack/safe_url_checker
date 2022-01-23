@@ -17,3 +17,7 @@
 
         def test_valid_urls(self):
             self.assertTrue(urlchecker.UrlChecker.validate_url("hostname:port/valid_url"))
+
+
+## Changes from initial email
+I am using dbm.dumb instead of dbm.gnu databases. This makes the files more portable (does not require external libraries), but provides lower performance. Additionally, there can be multiple readers and a single writer which will allow for changes to the file to be made while running (the file will need to be reloaded periodically to receive updates).

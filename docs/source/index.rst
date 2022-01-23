@@ -38,6 +38,21 @@ databaseABC
 .. automodule:: urlchecker.databaseABC
     :members:
 
+
+dbm_adaptor
+-----------
+*Note*: This module currently uses only dbm.dumb for this adaptor. 
+This means it has fairly low performance relative to dbm.gnu and dbm.ndbm.
+However, it has the following benefits:
+
+    - It is more portable across python versions and runtime environments.
+    - It allows 1 thread to be open for write and many simultaneous readers.
+
+        - The readers do not get updates until they reload the file.
+
+.. automodule:: urlchecker.dbm_adaptor
+    :members:
+
 Indices and tables
 ==================
 

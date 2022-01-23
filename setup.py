@@ -12,7 +12,6 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Lucas Hossack",
-    # TODO: Update package dir placeholder
     package_dir={"": "urlchecker"},
     packages=setuptools.find_packages(where="urlchecker"),
     install_requires=["sphinx", "furo"],

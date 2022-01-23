@@ -17,7 +17,7 @@ class UrlChecker:
             for db in databases:
                 self.register_database(db)
 
-    def check_url_has_malware(self, host_and_query: str):
+    def check_url_has_malware(self, host_and_query: str) -> bool:
         """Checks if URL is known to contain malware against all registered databases.
 
         Input query strings are of the form: "{hostname_and_port}/{original_path_and_query_string}". 
@@ -30,14 +30,15 @@ class UrlChecker:
         :rtype: bool
         """
         # TODO: Should an attempt be made to make urls be made uniform? (e.g. "evil.com" == "evil.com/"?)
-        # TODO: Should urls be validated? (Do they need to be standards compliant?)
+        # TODO: Should urls be lowercased? (evil.com/malware_Page should be blocked if evil.com/malware_page is known)
+        # TODO: Should urls be validated? (Do they need to be standards compliant?) -- assumption: only to extent needed to keep this service safe
         # TODO: parallelize calls to several dbs
         for db in self._databases:
             if db.check_url_has_malware(host_and_query):
                 return True
         return False
 
-    def register_database(self, database: DatabaseABC):
+    def register_database(self, database: DatabaseABC) -> None:
         """Register a database with the url checker.
 
         Registering a database adds the database to the list of databases checked for malware
