@@ -7,6 +7,7 @@ i.e. we can run unittest -m discover from the project root directory, or run a t
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from urlchecker import urlchecker, databaseABC, dbm_adaptor
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from urlchecker import database_abc, urlchecker, dbm_adaptor

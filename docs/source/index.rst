@@ -33,9 +33,9 @@ urlchecker
     :members:
 
 
-databaseABC
------------
-.. automodule:: urlchecker.databaseABC
+database_abc
+------------
+.. automodule:: urlchecker.database_abc
     :members:
 
 

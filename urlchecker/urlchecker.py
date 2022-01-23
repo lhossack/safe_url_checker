@@ -1,15 +1,17 @@
 """Core business logic for checking databases of known malware"""
-from .databaseABC import DatabaseABC
+from .database_abc import DatabaseABC
 import typing
+
 
 class UrlChecker:
     """Main entry-point for checking URLs against databases of URLs known to contain malware.
-    
+
     Registering a database adds the database to the list of databases checked for malware.
 
     :param typing.Iterable[DatabaseABC] databases: An iterable of concrete subclasses of DatabaseABC to register to the urlchecker
     :raises ValueError: In the case an invalid database adaptor is passed
     """
+
     def __init__(self, databases: typing.Iterable[DatabaseABC] = None) -> None:
         if not databases:
             self._databases = []
@@ -20,9 +22,9 @@ class UrlChecker:
     def check_url_has_malware(self, host_and_query: str) -> bool:
         """Checks if URL is known to contain malware against all registered databases.
 
-        Input query strings are of the form: "{hostname_and_port}/{original_path_and_query_string}". 
-        That is, they don't contain the protocol (e.g. "https://" is trimmed), but may include 
-        ports: e.g. https://www.google.com/search/path?query=1&here=2 should be passed in as 
+        Input query strings are of the form: "{hostname_and_port}/{original_path_and_query_string}".
+        That is, they don't contain the protocol (e.g. "https://" is trimmed), but may include
+        ports: e.g. https://www.google.com/search/path?query=1&here=2 should be passed in as
         www.google.com:443/search/path?query=1&here=2
 
         :param str host_and_query: Host and query
@@ -53,7 +55,7 @@ class UrlChecker:
 
     def get_db_count(self) -> int:
         """Get the number of databases registered to the UrlChecker
-        
+
         :return: total number of databases registered
         :rtype: int
         """
