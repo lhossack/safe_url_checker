@@ -40,7 +40,7 @@ build: init
 
 docs: init
 	@echo "\nGenerating docs"
-	cd docs && ${VENV}/bin/sphinx-build -b html source/ build/html
+	cd ${MAKEPATH}/docs && ${VENV}/bin/sphinx-build -b html source/ build/html
 
 clean:
 	@echo 'Warning! This target can be dangerous depending on your configuration.'
