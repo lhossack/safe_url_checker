@@ -48,5 +48,9 @@ class TestConfigReader(unittest.TestCase):
             del os.environ["URLCHECK_CONFIG_PATH"]
 
 
+class TestConfigReaderParser(unittest.TestCase):
+    pass
+
+
 if __name__ == "__main__":
     unittest.main()

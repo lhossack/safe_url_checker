@@ -24,26 +24,37 @@ class ConfigReader:
     """
 
     def __init__(self, config: dict = None) -> None:
-        self.config_file = None
+        self.config_file = ""
+        if config:
+            logger.info(f"Using dictionary config..")
+            self.config = config
+        else:
+            if "URLCHECK_CONFIG_PATH" in os.environ:
+                self.config_file = os.environ["URLCHECK_CONFIG_PATH"]
+            else:
+                self.config_file = "../sample_resources/default_config.json"
+            self.config = self.load_from_file()
+        self.parse_config()
+
+    def load_from_file(self):
+        """Load configuration from file (default or in os.environ["URLCHECK_CONFIG_PATH"])
+
+        :return: configuration dict from file
+        :rtype: dict
+        :raises OSError: In the case the configuration file could not be accessed.
+        :raises FileNotFoundError: In the case the file could not be found
+        """
         startdir = os.curdir
         try:
-            if not config:
-                os.chdir(os.path.dirname(__file__))
-                if "URLCHECK_CONFIG_PATH" in os.environ:
-                    self.config_file = os.environ["URLCHECK_CONFIG_PATH"]
-                else:
-                    self.config_file = "../sample_resources/default_config.json"
-                logger.info(
-                    f"Attempting to load config from `{os.path.abspath(self.config_file)}`.."
-                )
-                with open(self.config_file) as conf_in:
-                    self.config = json.load(conf_in)
-            else:
-                logger.info(f"Using dictionary config..")
-                self.config = config
+            os.chdir(os.path.dirname(__file__))
+            logger.info(
+                f"Attempting to load config from `{os.path.abspath(self.config_file)}`.."
+            )
+            with open(self.config_file) as conf_in:
+                config = json.load(conf_in)
         finally:
             os.chdir(startdir)
-        self.parse_config()
+        return config
 
     def parse_config(self):
         """Read the configuration options from the config dictionary"""
@@ -55,10 +66,10 @@ class ConfigReader:
         :return: ("dict", "") if config was passed directly, otherwise ("file", "filepath")
         :rtype: typing.Tuple[str, str]
         """
-        if self.config_file is None:
-            return ("dict", "")
-        else:
+        if self.config_file:
             return ("file", self.config_file)
+        else:
+            return ("dict", "")
 
     def urlchecker(self):
         pass
