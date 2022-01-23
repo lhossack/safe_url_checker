@@ -19,7 +19,7 @@ MAKEPATH ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 # Path to the location you wish the virtual environment to be created
 VENV ?= ${MAKEPATH}/.venv
 
-all: init build docs
+all: init test docs build
 
 init: ${MAKEPATH}/requirements.txt
 	@echo "\nInitializing Environment"

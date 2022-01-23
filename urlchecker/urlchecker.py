@@ -32,6 +32,7 @@ class UrlChecker:
         :rtype: bool
         """
         # TODO: Should an attempt be made to make urls be made uniform? (e.g. "evil.com" == "evil.com/"?)
+        # TODO: Check hostname+port AND full url (make it easy to optionally block a full domain, or specific path)
         # TODO: Should urls be lowercased? (evil.com/malware_Page should be blocked if evil.com/malware_page is known)
         # TODO: Should urls be validated? (Do they need to be standards compliant?) -- assumption: only to extent needed to keep this service safe
         # TODO: parallelize calls to several dbs

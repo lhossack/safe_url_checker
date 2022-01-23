@@ -5,19 +5,29 @@ Safe URL Checker is a web service designed to efficiently check if a URL is safe
 
 It does this by searching several databases of URLs known to contain malware.
 
-The target use case is for serving responses to a proxy. 
+The target use case is for serving responses to a proxy, but it could be extended to other applications.
 
-It is easily extensible and configurable to sit behind various front ends
-and can access many databases.
+It is easily extensible and configurable, and able to sit behind various front ends
+and can access many databases. Depending on development status, some development may be required.
 
-Quickstart
-==========
-Project is not deployable yet
+If you are interested in more advanced configuration, other deployment options, or development, please visit
+the github repo at https://github.com/lhossack/safe_url_checker.
+
+
+Deployment Quickstart
+=====================
+Project is not deployable yet :(
+
 
 Installation
 ============
 Please see README.md for current installation instructions for developers.
-Once the service is packaged this section will be filled out for users.
+#TODO Once the service is packaged this section will be filled out for users.
+
+
+Configuration
+=============
+
 
 
 API Documentation
@@ -49,6 +59,11 @@ However, it has the following benefits:
     - It allows 1 thread to be open for write and many simultaneous readers.
 
         - The readers do not get updates until they reload the file.
+
+This class should be able to use any dbm driver with no reloading. If you're 
+implementing reloading please ensure there are tests particularly for 
+handling reloading of dbm.gnu with multiple threads. All readers will need 
+to close before the writer can be opened to update the database.
 
 .. automodule:: urlchecker.dbm_adaptor
     :members:
