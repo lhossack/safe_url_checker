@@ -27,7 +27,58 @@ Please see README.md for current installation instructions for developers.
 
 Configuration
 =============
+Configuration is handled via a json configuration file and environment variables.
 
+All paths provided in configuration files or environment variables must be either
+an absolute path, or a relative path from urlchecker/config_reader.py.
+
+Sample resources, including a sample configuration file and dbm.dumb databases can be found
+at in `sample_resources/`.
+
+Environment Variables
+---------------------
+
+    - `URLCHECK_CONFIG_PATH` defines where the config file is. There is a default configuration file in the urlchecker source directory which is used if `URLCHECK_CONFIG_PATH` is not defined or can't be opened.
+
+
+Configuration file
+--------------------
+
+An example configuration file looks like this:
+
+.. literalinclude:: ../../sample_resources/default_config.json
+  :linenos:
+  :language: JSON
+
+The global keys in the dictionary are:
+
+- databases: a list of database configurations
+
+Database Configuration
+^^^^^^^^^^^^^^^^^^^^^^
+A database configuration consists of 2 elements (type: str and options: object).
+
+There are some different database adaptors, and each has their own configuration options.
+
+"dbm.dumb" databases have two options: 
+
+- filename: string - path to database file(s)
+- reload_time: int | null - time in minutes between database file reloads. If you don't want the app to reload, enter `null`.
+
+.. code-block:: JSON
+
+    {
+        "type": "dbm.dumb",
+        "options": {
+            "filename": "sample1",
+            "reload_time": 10
+        }
+    }
+
+Note: Some configurations in the configuration file may specify that information is stored in an 
+environment variable. This is useful for things like usernames/ passwords, or other items
+that need to be securely stored or managed. These can be injected into docker containers 
+at run time, allowing them to be stored in secure locations and rotated relatively easily.
 
 
 API Documentation
@@ -56,9 +107,7 @@ This means it has fairly low performance relative to dbm.gnu and dbm.ndbm.
 However, it has the following benefits:
 
     - It is more portable across python versions and runtime environments.
-    - It allows 1 thread to be open for write and many simultaneous readers.
-
-        - The readers do not get updates until they reload the file.
+    - It allows 1 thread to be open for write and many simultaneous readers. However note that the readers do not get updates until they reload the file.
 
 This class should be able to use any dbm driver with no reloading. If you're 
 implementing reloading please ensure there are tests particularly for 

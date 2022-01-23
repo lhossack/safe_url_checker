@@ -1,0 +1,18 @@
+{
+    "databases": [
+        {
+            "type": "dbm.dumb",
+            "options": {
+                "filename": "sample1",
+                "reload_time": null
+            }
+        },
+        {
+            "type": "dbm.dumb",
+            "options": {
+                "filename": "sample1",
+                "reload_time": 10
+            }
+        }
+    ]
+}

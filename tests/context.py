@@ -10,4 +10,4 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from urlchecker import database_abc, urlchecker, dbm_adaptor
+from urlchecker import database_abc, urlchecker, dbm_adaptor, config_reader
