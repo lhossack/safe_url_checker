@@ -5,6 +5,7 @@ from context import dbm_adaptor
 import dbm.dumb as dbm
 from utils import mkTempDB, rmTempDB
 import datetime
+import os
 
 
 class TestDbmCheckMalware(unittest.TestCase):
@@ -98,6 +99,31 @@ class TestReloadCooldown(unittest.TestCase):
 
         del db
         del db2
+
+
+class TestConfigureFromDict(unittest.TestCase):
+    """Verify configure from dict sets internal params properly"""
+
+    def setUp(self) -> None:
+        mkTempDB(self)
+
+    def tearDown(self) -> None:
+        rmTempDB(self)
+
+    def test_config_from_dict_valid(self):
+        """Verify internal config properly set"""
+        db = dbm_adaptor.DbmAdaptor.configure_from_dict(
+            {"filename": os.path.abspath("tmp/tmp"), "reload_time": 10}
+        )
+        self.assertEqual(db.filename, os.path.abspath("tmp/tmp"))
+        self.assertEqual(db.reload_rate_minutes, 10)
+
+    def test_config_from_dict_missing_inputs(self):
+        """Verify config raises error on missing inputs"""
+        with self.assertRaises(KeyError):
+            db = dbm_adaptor.DbmAdaptor.configure_from_dict({"filename": "filename"})
+        with self.assertRaises(KeyError):
+            db = dbm_adaptor.DbmAdaptor.configure_from_dict({"reload_time": 10})
 
 
 if __name__ == "__main__":

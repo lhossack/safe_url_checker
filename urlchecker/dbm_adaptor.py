@@ -1,13 +1,16 @@
 """dbm based url malware lookup database"""
 from imp import reload
-from urlchecker.database_abc import DatabaseABC
+from urlchecker.database_abc import DatabaseABC, DatabaseAbcT
 import dbm.dumb as dbm  # Used for platform compatibility
 import weakref
 import datetime
+import typing
 
 import logging
 
 logger = logging.getLogger(__name__)
+
+DbmAdaptorT = typing.TypeVar("DbmAdaptorT", bound="DbmAdaptor")
 
 
 class DbmAdaptor(DatabaseABC):
@@ -19,11 +22,29 @@ class DbmAdaptor(DatabaseABC):
     :raises OSError: In the case the database file cannot be opened
     """
 
-    def __init__(self, filename: str, reload_rate_minutes: int = 10) -> None:
+    def __init__(
+        self, filename: str, reload_rate_minutes: typing.Union[int, None] = 10
+    ) -> None:
         self.filename = filename
         self.reload_rate_minutes = reload_rate_minutes
         self.reload_time = datetime.datetime.utcnow()
-        self.reload_db_if_needed()
+        self.reload_database()
+
+    @classmethod
+    def configure_from_dict(cls, options: dict) -> DbmAdaptorT:
+        """Alternative constructor using options from from a configuration dictionary
+
+        :param options: The configuration dictionary of the form specified in the documentation for this database adaptor.
+        :type options: dict, required
+        :return: A concrete subclass of DatabaseABC
+        :rtype: DatabaseABC
+        """
+        filename = str(options["filename"])
+        if options["reload_time"]:
+            reload_time = int(options["reload_time"])
+        else:
+            reload_time = None
+        return cls(filename, reload_rate_minutes=reload_time)
 
     def check_url_has_malware(self, host_and_query: str) -> bool:
         """Check if url is associated with malware in this database.
@@ -46,17 +67,21 @@ class DbmAdaptor(DatabaseABC):
 
     def reload_db_if_needed(self):
         """Reload the database from filesystem if past the cooldown time"""
-        if datetime.datetime.utcnow() >= self.reload_time:
+        if (
+            self.reload_rate_minutes is not None
+            and datetime.datetime.utcnow() >= self.reload_time
+        ):
             self.reload_database()
-            self.reload_time = datetime.datetime.utcnow() + datetime.timedelta(
-                minutes=self.reload_rate_minutes
-            )
 
     def reload_database(self):
         """Load or reload the database from memory.
 
         :raises OSError: In the case the database file cannot be opened
         """
+        if self.reload_rate_minutes is not None:
+            self.reload_time = datetime.datetime.utcnow() + datetime.timedelta(
+                minutes=self.reload_rate_minutes
+            )
         self.db = dbm.open(self.filename, "r")
 
         def close(db, filename):

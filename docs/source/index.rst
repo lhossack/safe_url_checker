@@ -29,16 +29,15 @@ Configuration
 =============
 Configuration is handled via a json configuration file and environment variables.
 
-All paths provided in configuration files or environment variables must be either
-an absolute path, or a relative path from urlchecker/config_reader.py.
+All paths provided in the configuration file must be either absolute, or relative to the configuration file.
 
 Sample resources, including a sample configuration file and dbm.dumb databases can be found
-at in `sample_resources/`.
+in `sample_resources/`.
 
 Environment Variables
 ---------------------
 
-    - `URLCHECK_CONFIG_PATH` defines where the config file is. There is a default configuration file in the urlchecker source directory which is used if `URLCHECK_CONFIG_PATH` is not defined or can't be opened.
+    - `URLCHECK_CONFIG_PATH` defines where the config file is. There is a default configuration file in the urlchecker source directory which is used if `URLCHECK_CONFIG_PATH` is not defined or can't be opened. Config file path must be either an absolute path, or a relative path from urlchecker/config_reader.py.
 
 
 Configuration file
@@ -52,7 +51,7 @@ An example configuration file looks like this:
 
 The global keys in the dictionary are:
 
-- databases: a list of database configurations
+- databases: a list of database configurations. There must be at least 1 database configured.
 
 Database Configuration
 ^^^^^^^^^^^^^^^^^^^^^^

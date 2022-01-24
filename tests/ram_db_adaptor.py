@@ -8,6 +8,10 @@ class RamDbAdaptor(database_abc.DatabaseABC):
         super().__init__()
         self.evil_urls = set()
 
+    @classmethod
+    def configure_from_dict(cls, options):
+        raise NotImplementedError
+
     def add_malware_url(self, url) -> None:
         self.evil_urls.add(url)
 

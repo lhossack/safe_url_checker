@@ -1,7 +1,7 @@
 import unittest
 import unittest.mock
 from context import urlchecker
-import tests.ram_db_adaptor as ram_db_adaptor
+import ram_db_adaptor
 import utils
 
 

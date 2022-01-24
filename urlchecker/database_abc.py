@@ -2,6 +2,9 @@
 Defines abstract base class which database adaptors must conform to.
 """
 import abc
+import typing
+
+DatabaseAbcT = typing.TypeVar("DatabaseAbcT", bound="DatabaseABC")
 
 
 class DatabaseABC(metaclass=abc.ABCMeta):
@@ -19,5 +22,16 @@ class DatabaseABC(metaclass=abc.ABCMeta):
         :param str host_and_query: Host and query
         :return: True if URL found to have malware in this database, False otherwise
         :rtype: bool
+        """
+        raise NotImplementedError
+
+    @abc.abstractclassmethod
+    def configure_from_dict(cls, options) -> DatabaseAbcT:
+        """Initialize and return a new database adaptor from a configuration dictionary
+
+        :param options: The configuration dictionary of the form specified in the documentation for this database adaptor.
+        :type options: dict, required
+        :return: A concrete subclass of DatabaseABC
+        :rtype: DatabaseABC
         """
         raise NotImplementedError
