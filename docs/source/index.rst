@@ -57,7 +57,7 @@ Environment Variables
 
     - `URLCHECK_CONFIG_PATH` defines where the config file is. There is a default configuration file in the urlchecker source directory which is used if `URLCHECK_CONFIG_PATH` is not defined or can't be opened. Config file path must be either an absolute path, or a relative path from urlchecker/config_reader.py.
     - `URLINFO_LOGLEVEL` defines logging level for the server. It must be one of "INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL".
-    - `URLINFO_SERVER` defines server location. For validation testing only. Must include schema, host and port. e.g. `http://localhost:5000`
+
 
 Configuration file
 --------------------

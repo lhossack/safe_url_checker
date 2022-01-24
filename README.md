@@ -2,11 +2,9 @@
 
 A web service for checking if urls are known to contain malware.
 
-#TODO: Add link to user & api docs once hosted
+If you are interested in using the service, please see the [User Documentation](http://urlinfo-project-safeurlchecker-docs-sphinx-4312lkj1234.s3-website.ca-central-1.amazonaws.com)
 
-If you are interested in using the service, please see the [User Documentation](link-to-user-docs)
-
-API documentation is available at [API Documentation](link-to-api-docs)
+API documentation is available at [API Documentation](http://urlinfo-project-safeurlchecker-docs-sphinx-4312lkj1234.s3-website.ca-central-1.amazonaws.com/#api-documentation)
 
 The rest of this document is brief notes for developers improving or extending this project, or operators interested in customizing the behaviour or deployment environment (e.g. deploying to AWS lambda instead of flask on ECS).
 
@@ -97,8 +95,35 @@ To learn more, visit the flask documentation.
 ### Building a release package (docker)
 #TODO
 
-### Running end-to-end tests
-#TODO
+### Running Validation Tests
+Validation tests are stored in tests_validation and require some setup.
+
+First, a server must be running, and that server is required to have either copies of or access to the sample_resources dbm databases. These databases contain URLs which are tested against for validation.
+
+The server must be running to test against it. Running the flask development server as described in 
+"Running the Development Server" above, with `URLCHECK_CONFIG_PATH` unset or pointing to 
+`../sample_resources/default_config.json` will cause it to acquire the required sample databases.
+
+Prepare a separate shell to run the validation tester.
+
+There is an environment variable to set in the 'validation test' shell when running the validation tests:
+
+   - `URLINFO_SERVER` defines the server's location. It must include schema, host and port. e.g. `http://localhost:5000` with no trailing '/'. This should be exported in the shell that the validation tests are being run from.
+
+In the validation shell, 
+
+```make test_validation``` 
+
+or manually,
+
+```
+cd tests_validation
+python3 test_server.py
+```
+
+will run the tests.
+
+
 
 ## Release Process
 For a release to go to test:
@@ -110,10 +135,9 @@ For a release to go to test:
 
 Once in test, manual and end to end tests must pass before being released.
 
-This product is not operated by the developers. For discussion regarding deployment
-configuration and options, please see the [User Documentation](link-to-user-docs).
+This product is not operated by the developer. For discussion regarding deployment
+configuration and options, please see the [User Documentation](http://urlinfo-project-safeurlchecker-docs-sphinx-4312lkj1234.s3-website.ca-central-1.amazonaws.com/).
 
-#TODO: Update link to user & api docs once hosted
 
 ## Release History
 Please see CHANGELOG.md
