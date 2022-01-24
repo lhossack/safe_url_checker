@@ -20,18 +20,20 @@ class TestDbmCheckMalware(unittest.TestCase):
     def test_malware_exists(self):
         """Check returns True when record exists"""
         db = dbm_adaptor.DbmAdaptor("tmp/tmp")
-        self.assertTrue(db.check_url_has_malware("www.evil.com"))
-        self.assertTrue(
-            db.check_url_has_malware("www.evil.com/index.html?q=download+ram")
+        self.assertEqual(db.check_url_has_malware("www.evil.com")[0], "unsafe")
+        self.assertEqual(
+            db.check_url_has_malware("www.evil.com/index.html?q=download+ram")[0],
+            "unsafe",
         )
         del db
 
     def test_malware_not_exists(self):
         """Check should return False when records to not exist in db"""
         db = dbm_adaptor.DbmAdaptor("tmp/tmp")
-        self.assertFalse(db.check_url_has_malware("www.good.com"))
-        self.assertFalse(
-            db.check_url_has_malware("www.3vil.com/index.html?q=download+ram")
+        self.assertEqual(db.check_url_has_malware("www.good.com")[0], "safe")
+        self.assertEqual(
+            db.check_url_has_malware("www.3vil.com/index.html?q=download+ram")[0],
+            "safe",
         )
         del db
 
@@ -60,9 +62,9 @@ class TestDbmReloadAccess(unittest.TestCase):
         db = dbm_adaptor.DbmAdaptor("tmp/tmp")
         with dbm.open("tmp/tmp", "c", 0o666) as db2:
             db2[b"www.new-evil.com"] = b"Contains malware"
-        self.assertFalse(db.check_url_has_malware("www.new-evil.com"))
+        self.assertEqual(db.check_url_has_malware("www.new-evil.com")[0], "safe")
         db.reload_database()
-        self.assertTrue(db.check_url_has_malware("www.new-evil.com"))
+        self.assertEqual(db.check_url_has_malware("www.new-evil.com")[0], "unsafe")
         del db
         del db2
 
@@ -83,19 +85,19 @@ class TestReloadCooldown(unittest.TestCase):
 
         with dbm.open("tmp/tmp", "w", 0o666) as db2:
             db2[b"www.new-evil.com"] = b"Contains malware"
-        self.assertFalse(db.check_url_has_malware("www.new-evil.com"))
+        self.assertEqual(db.check_url_has_malware("www.new-evil.com")[0], "safe")
 
         with unittest.mock.patch("dbm_adaptor.datetime.datetime") as mock_datetime:
             mock_datetime.utcnow.return_value = reload_time - datetime.timedelta(
                 seconds=1
             )
-            self.assertFalse(db.check_url_has_malware("www.new-evil.com"))
+            self.assertEqual(db.check_url_has_malware("www.new-evil.com")[0], "safe")
 
         with unittest.mock.patch("dbm_adaptor.datetime.datetime") as mock_datetime:
             mock_datetime.utcnow.return_value = reload_time + datetime.timedelta(
                 seconds=1
             )
-            self.assertTrue(db.check_url_has_malware("www.new-evil.com"))
+            self.assertEqual(db.check_url_has_malware("www.new-evil.com")[0], "unsafe")
 
         del db
         del db2

@@ -1,0 +1,5 @@
+evil.com:80
+prettyevil.com:80/path
+www.kindaevil.com:80
+sandbox.reallyevil.com:80/
+www.superevil.com:80/index.html?q=download+ram

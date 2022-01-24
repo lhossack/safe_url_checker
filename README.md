@@ -83,7 +83,16 @@ And access your newly built docs by navigating to
 `docs/build/source/html/index.html` in your browser.
 
 ### Running the Development Server
-#TODO
+To run the dev server (flask) in development mode:
+
+```
+export FLASK_APP="flask_frontend:create_app"
+export FLASK_ENV=development
+.venv/bin/flask run
+```
+
+This will allow you to use flask's debug features in the browser and on the command line.
+To learn more, visit the flask documentation.
 
 ### Building a release package (docker)
 #TODO

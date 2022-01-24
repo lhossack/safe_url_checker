@@ -6,6 +6,7 @@ import unittest.mock
 import os
 from urlchecker.database_abc import DatabaseABC
 from utils import mkTempDB, rmTempDB
+import dbm.dumb
 
 
 class TestConfigReader(unittest.TestCase):
@@ -49,6 +50,48 @@ class TestConfigReader(unittest.TestCase):
                 cfg_reader = config_reader.ConfigReader()
         finally:
             del os.environ["URLCHECK_CONFIG_PATH"]
+
+    def test_relative_path_environ(self):
+        """Test ConfigReader properly handles relative paths to config files"""
+        startdir = os.getcwd()
+        cfg_dir_path = os.path.join(os.path.dirname(__file__), "temp")
+        os.makedirs(cfg_dir_path, exist_ok=True)
+        cfg_path = os.path.join(cfg_dir_path, "config.json")
+        db_path = os.path.join(cfg_dir_path, "tmp_db")
+
+        with open(cfg_path, "w") as fout:
+            json.dump(
+                {
+                    "databases": [
+                        {
+                            "type": "dbm.dumb",
+                            "options": {
+                                "filename": os.path.relpath(
+                                    db_path, os.path.dirname(cfg_path)
+                                ),
+                                "reload_time": 10,
+                            },
+                        }
+                    ]
+                },
+                fout,
+            )
+        with dbm.dumb.open(db_path, "c", 0o666) as db:
+            db[b"www.test.com"] = b"test data"
+            db[b"www.sample.ca"] = b"malware"
+
+        rel_path = os.path.relpath(cfg_path, os.path.dirname(config_reader.__file__))
+
+        try:
+            os.environ["URLCHECK_CONFIG_PATH"] = rel_path
+            cfg_reader = config_reader.ConfigReader()
+            dbs = cfg_reader.configure_all_databases()
+            self.assertEqual(len(dbs), 1)
+            self.assertTrue(issubclass(type(dbs[0]), DatabaseABC))
+        finally:
+            del os.environ["URLCHECK_CONFIG_PATH"]
+            os.chdir(startdir)
+            shutil.rmtree(cfg_dir_path)
 
 
 class TestConfigReaderParser(unittest.TestCase):

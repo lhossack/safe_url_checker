@@ -11,7 +11,20 @@ class TestUrlCheckerHasMalware(unittest.TestCase):
     def test_no_db(self):
         """Ensure malware is not reported when there are no databases attached"""
         checker = urlchecker.UrlChecker()
-        self.assertFalse(checker.check_url_has_malware("hostname:port/path"))
+        self.assertEqual(checker.check_url_has_malware("hostname:port/path")[0], "safe")
+
+    def test_single_db_using_constructor(self):
+        """Check malware is reported if malware is in configuration with 1 database, and not reported otherwise"""
+        mem_db = ram_db_adaptor.RamDbAdaptor()
+        for url in utils.memory_urls:
+            mem_db.add_malware_url(url)
+        checker = urlchecker.UrlChecker(databases=[mem_db])
+
+        for url in utils.memory_urls:
+            self.assertEqual(checker.check_url_has_malware(url)[0], "unsafe")
+
+        self.assertEqual(checker.check_url_has_malware("good.com")[0], "safe")
+        self.assertEqual(checker.check_url_has_malware("good.com/path")[0], "safe")
 
     def test_single_db(self):
         """Check malware is reported if malware is in configuration with 1 database, and not reported otherwise"""
@@ -23,10 +36,10 @@ class TestUrlCheckerHasMalware(unittest.TestCase):
         checker.register_database(mem_db)
 
         for url in utils.memory_urls:
-            self.assertTrue(checker.check_url_has_malware(url))
+            self.assertEqual(checker.check_url_has_malware(url)[0], "unsafe")
 
-        self.assertFalse(checker.check_url_has_malware("good.com"))
-        self.assertFalse(checker.check_url_has_malware("good.com/path"))
+        self.assertEqual(checker.check_url_has_malware("good.com")[0], "safe")
+        self.assertEqual(checker.check_url_has_malware("good.com/path")[0], "safe")
 
     def test_multiple_db(self):
         """Check malware is reported if it is in any database, and not reported otherwise"""
@@ -46,13 +59,17 @@ class TestUrlCheckerHasMalware(unittest.TestCase):
         checker.register_database(mem_db2)
         checker.register_database(mem_db3)
 
-        self.assertTrue(checker.check_url_has_malware("evil.com"))
-        self.assertTrue(checker.check_url_has_malware("evil.com/path"))
-        self.assertTrue(checker.check_url_has_malware("eve.com/evil_path?q=bad"))
-        self.assertTrue(checker.check_url_has_malware("lucifer.com"))
+        self.assertEqual(checker.check_url_has_malware("evil.com")[0], "unsafe")
+        self.assertEqual(checker.check_url_has_malware("evil.com/path")[0], "unsafe")
+        self.assertEqual(
+            checker.check_url_has_malware("eve.com/evil_path?q=bad")[0], "unsafe"
+        )
+        self.assertEqual(checker.check_url_has_malware("lucifer.com")[0], "unsafe")
 
-        self.assertFalse(checker.check_url_has_malware("good.com"))
-        self.assertFalse(checker.check_url_has_malware("lucifer.com/good_path"))
+        self.assertEqual(checker.check_url_has_malware("good.com")[0], "safe")
+        self.assertEqual(
+            checker.check_url_has_malware("lucifer.com/good_path")[0], "safe"
+        )
 
 
 class TestUrlCheckerDbRegistration(unittest.TestCase):

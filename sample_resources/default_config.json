@@ -3,14 +3,14 @@
         {
             "type": "dbm.dumb",
             "options": {
-                "filename": "sample1",
+                "filename": "sample",
                 "reload_time": null
             }
         },
         {
             "type": "dbm.dumb",
             "options": {
-                "filename": "sample1",
+                "filename": "unsafe",
                 "reload_time": 10
             }
         }

@@ -1,0 +1,5 @@
+'evil.com:80', (0, 13)
+'prettyevil.com:80/path', (512, 13)
+'www.kindaevil.com:80', (1024, 13)
+'sandbox.reallyevil.com:80/', (1536, 13)
+'www.superevil.com:80/index.html?q=download+ram', (2048, 13)

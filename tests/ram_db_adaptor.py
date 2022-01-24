@@ -1,4 +1,5 @@
 from context import database_abc
+import typing
 
 
 class RamDbAdaptor(database_abc.DatabaseABC):
@@ -15,8 +16,8 @@ class RamDbAdaptor(database_abc.DatabaseABC):
     def add_malware_url(self, url) -> None:
         self.evil_urls.add(url)
 
-    def check_url_has_malware(self, host_and_query) -> bool:
+    def check_url_has_malware(self, host_and_query) -> typing.Tuple[str, str]:
         if host_and_query in self.evil_urls:
-            return True
+            return ("unsafe", "malware")
         else:
-            return False
+            return ("safe", "")

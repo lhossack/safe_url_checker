@@ -31,10 +31,12 @@ class TestUrlCheckerDbmDbs(unittest.TestCase):
         all_evil_urls.extend(utils.memory_urls)
 
         for url in all_evil_urls:
-            self.assertTrue(checker.check_url_has_malware(url))
+            self.assertEqual(checker.check_url_has_malware(url)[0], "unsafe")
 
-        self.assertFalse(checker.check_url_has_malware("good.com"))
-        self.assertFalse(checker.check_url_has_malware("lucifer.com/good_path"))
+        self.assertEqual(checker.check_url_has_malware("good.com")[0], "safe")
+        self.assertEqual(
+            checker.check_url_has_malware("lucifer.com/good_path")[0], "safe"
+        )
 
 
 if __name__ == "__main__":

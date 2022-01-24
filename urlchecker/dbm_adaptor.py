@@ -5,6 +5,7 @@ import dbm.dumb as dbm  # Used for platform compatibility
 import weakref
 import datetime
 import typing
+import os
 
 import logging
 
@@ -25,7 +26,7 @@ class DbmAdaptor(DatabaseABC):
     def __init__(
         self, filename: str, reload_rate_minutes: typing.Union[int, None] = 10
     ) -> None:
-        self.filename = filename
+        self.filename = os.path.abspath(filename)
         self.reload_rate_minutes = reload_rate_minutes
         self.reload_time = datetime.datetime.utcnow()
         self.reload_database()
@@ -46,24 +47,27 @@ class DbmAdaptor(DatabaseABC):
             reload_time = None
         return cls(filename, reload_rate_minutes=reload_time)
 
-    def check_url_has_malware(self, host_and_query: str) -> bool:
+    def check_url_has_malware(self, host_and_query: str) -> typing.Tuple[str, str]:
         """Check if url is associated with malware in this database.
 
         :param str host_and_query: Host and query string (e.g. "www.google.com/search/1/?q=search+term")
-        :return: True if URL found to have malware in any database, False otherwise
-        :rtype: bool
+        :return (status, reason): ("unsafe", "reason") if URL found to have malware in any database, ("safe", "") or ("unknown", "") otherwise.
+        :rtype: typing.Tuple[str, str]
         """
         self.reload_db_if_needed()
         try:
             byte_key = host_and_query.encode(encoding="utf-8", errors="strict")
         except ValueError:
             logger.info(f"Failed to encode URL: {host_and_query}")
-            return True  # TODO: Check assumption: should this return True or False? Config option?
+            return (
+                "unknown",
+                "failed to encode",
+            )
 
         if byte_key in self.db:
-            return True
+            return ("unsafe", self.db[byte_key].decode("utf-8"))
         else:
-            return False
+            return ("safe", "")
 
     def reload_db_if_needed(self):
         """Reload the database from filesystem if past the cooldown time"""

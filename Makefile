@@ -30,9 +30,16 @@ test: init
 	@echo "\nRunning Unit Tests"
 	${VENV}/bin/python3 -m unittest discover -s ${MAKEPATH}/tests || true
 
+test_validation: init
+	@echo "\nRunning Unit Tests"
+	export URLINFO_SERVER=http://localhost:5000 &&\
+	${VENV}/bin/python3 -m unittest discover -s ${MAKEPATH}/tests_validation || true
+
 devserver: init
 	@echo "\nStarting development server"
-	@echo 'make devserver not yet implemented - should run flask dev server'
+	export FLASK_APP="flask_frontend:create_app" &&\
+	export FLASK_ENV=development &&\
+	${VENV}/bin/flask run
 
 build: init
 	@echo "\nGenerating build"

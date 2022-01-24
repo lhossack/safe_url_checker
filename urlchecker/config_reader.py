@@ -9,7 +9,7 @@ import dbm_adaptor
 from urlchecker import urlchecker
 import database_abc
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 class ConfigReader:
@@ -35,7 +35,7 @@ class ConfigReader:
 
     def __init__(self, config: dict = None) -> None:
         self.config_file = ""
-        self.urlchecker = None
+        self.config_dir = ""
         if config:
             logger.info(f"Using dictionary config..")
             self.config = config
@@ -53,12 +53,13 @@ class ConfigReader:
         :rtype: dict
         :raises OSError: In the case the configuration file could not be accessed.
         """
-        startdir = os.curdir
+        startdir = os.getcwd()
         try:
             os.chdir(os.path.dirname(__file__))
             logger.info(
                 f"Attempting to load config from `{os.path.abspath(self.config_file)}`.."
             )
+            self.config_dir = os.path.dirname(os.path.abspath(self.config_file))
             with open(self.config_file) as conf_in:
                 config = json.load(conf_in)
         except Exception:
@@ -100,13 +101,20 @@ class ConfigReader:
         if "databases" in self.config and isinstance(
             self.config["databases"], typing.Iterable
         ):
-            if len(self.config["databases"]) < 1:
-                raise ValueError("No databases in configuration!")
-            for db_config in self.config["databases"]:
-                try:
-                    databases.append(self.configure_database(db_config))
-                except Exception as e:
-                    raise ValueError(f"Error loading database: {db_config}")
+            startdir = os.getcwd()
+            if self.config_dir:
+                os.chdir(self.config_dir)
+            try:
+                if len(self.config["databases"]) < 1:
+                    raise ValueError("No databases in configuration!")
+                for db_config in self.config["databases"]:
+                    try:
+                        databases.append(self.configure_database(db_config))
+                    except Exception as e:
+                        raise ValueError(f"Error loading database: {db_config}")
+            finally:
+                if self.config_dir:
+                    os.chdir(startdir)
             return databases
         raise ValueError("No 'databases' in config!")
 

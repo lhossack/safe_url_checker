@@ -11,7 +11,7 @@ class DatabaseABC(metaclass=abc.ABCMeta):
     """Base class for URL malware status database adaptors"""
 
     @abc.abstractmethod
-    def check_url_has_malware(self, host_and_query) -> bool:
+    def check_url_has_malware(self, host_and_query) -> typing.Tuple[str, str]:
         """Checks if url is known to have malware
 
         Input query strings are of the form: "{hostname_and_port}/{original_path_and_query_string}".

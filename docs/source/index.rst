@@ -14,6 +14,24 @@ If you are interested in more advanced configuration, other deployment options, 
 the github repo at https://github.com/lhossack/safe_url_checker.
 
 
+How URLs are Checked
+====================
+A URL that is entered into the database may be in one of 3 forms: 
+
+1. including just the hostname and port, e.g. `example.com:80`
+2. including hostname, port and path, e.g. `example.com:443/` or `example.com:443/path/to/resource`
+3. including a query string at the end, e.g. `example.com:80/path/to/res?q=something&p=specific`
+
+In the case of option 1, all requests to that domain and port will return as hosting malware. In the case of 2, any 
+requests made to that specific path (not shorter or longer) will be reported as hosting malware. In the case of 3, 
+users will not be blocked if their query is even slightly different. It is this particular query that will be reported
+as hosting malware.
+
+URLs that cannot be parsed are reported as unsafe.
+
+Currently this behaviour is not configurable. 
+
+
 Deployment Quickstart
 =====================
 Project is not deployable yet :(
@@ -38,7 +56,8 @@ Environment Variables
 ---------------------
 
     - `URLCHECK_CONFIG_PATH` defines where the config file is. There is a default configuration file in the urlchecker source directory which is used if `URLCHECK_CONFIG_PATH` is not defined or can't be opened. Config file path must be either an absolute path, or a relative path from urlchecker/config_reader.py.
-
+    - `URLINFO_LOGLEVEL` defines logging level for the server. It must be one of "INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL".
+    - `URLINFO_SERVER` defines server location. For validation testing only. Must include schema, host and port. e.g. `http://localhost:5000`
 
 Configuration file
 --------------------
@@ -115,6 +134,19 @@ to close before the writer can be opened to update the database.
 
 .. automodule:: urlchecker.dbm_adaptor
     :members:
+
+
+config_reader
+--------------
+.. automodule:: urlchecker.config_reader
+    :members:
+
+
+flask_frontend
+---------------
+.. automodule:: urlchecker.flask_frontend
+    :members:
+
 
 Indices and tables
 ==================
