@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  urlinfo:
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - privatenet
+    environment:
+      - name=value
+networks:
+  privatenet:
+    driver: bridge
