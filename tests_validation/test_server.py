@@ -13,6 +13,7 @@ import requests
 
 
 def get_evil_urls():
+    """Get concatenated list of all urls from files in sample_resources"""
     sample_dir = os.path.join(
         os.path.abspath(os.path.dirname(__file__)), "..", "sample_resources"
     )
@@ -31,7 +32,13 @@ def get_evil_urls():
 
 
 def get_good_urls():
-    return ["www.google.com", "www.amazon.com", "cisco.com"]
+    """A few urls that aren't (or shouldn't be) in any of those databases"""
+    return [
+        "cisco.com",
+        "www.google.com",
+        "www.amazon.com",
+        "something.good.ca/with/a/path?and=a&query=p",
+    ]
 
 
 class TestUrlInfoService(unittest.TestCase):

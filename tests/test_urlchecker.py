@@ -6,7 +6,7 @@ import utils
 
 
 class TestUrlCheckerHasMalware(unittest.TestCase):
-    """Valid URL check tests"""
+    """Ensure data is aggregated and propagated correctly from databases"""
 
     def test_no_db(self):
         """Ensure malware is not reported when there are no databases attached"""

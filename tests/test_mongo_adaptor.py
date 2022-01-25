@@ -27,10 +27,10 @@ class TestMongoConfig(unittest.TestCase):
 
 
 class TestMongoCheckMalware(unittest.TestCase):
-    """Check malware exists"""
+    """Check cases where search returns/ does not return results"""
 
     def test_malware_url_exists(self):
-        """Check adaptor responds correctly when a url is in the database"""
+        """Check adaptor responds correctly when a url in the input list is in the database"""
         mongo_client_adaptor = mongo_adaptor.MongoAdaptor.configure_from_dict(
             {
                 "connection_string": "mongodb://localhost:27017/",
@@ -49,10 +49,12 @@ class TestMongoCheckMalware(unittest.TestCase):
                     raise errors.InvalidOperation("Mock invalid operation")
 
             mock_find.return_value = StubCursor()
-            mongo_client_adaptor.check_any_url_has_malware(["bad.com"])
+            mongo_client_adaptor.check_any_url_has_malware(
+                ["good.com", "bad.com", "also-good.ca"]
+            )
 
     def test_malware_not_exists(self):
-        """Check adaptor responds correctly when no items match"""
+        """Check adaptor responds correctly when no items match for any item in the list"""
         mongo_client_adaptor = mongo_adaptor.MongoAdaptor.configure_from_dict(
             {
                 "connection_string": "mongodb://localhost:27017/",

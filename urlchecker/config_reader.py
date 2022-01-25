@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 class ConfigReader:
     """Startup configuration reader
 
-    Configuration defaults to read from same directory as config_reader.py
+    Configuration reads relative paths from same directory as config_reader.py
+
+    By default, it reads the "../sample_resources/default_config.json" file.
     Override this behaviour by exporting the environment variable "URLINFO_CONFIG"
     or providing a configuration dictionary directly.
 
@@ -47,7 +49,7 @@ class ConfigReader:
                 self.config_file = "../sample_resources/default_config.json"
             self.config = self.load_from_file()
 
-    def load_from_file(self):
+    def load_from_file(self) -> dict:
         """Load configuration from file (default or in os.environ["URLINFO_CONFIG"])
 
         :return: configuration dict from file
@@ -80,7 +82,7 @@ class ConfigReader:
         else:
             return ("dict", "")
 
-    def configure(self):
+    def configure(self) -> None:
         """Create app as per configuration in config dict
 
         self.config must exist prior to this call.
@@ -119,7 +121,7 @@ class ConfigReader:
         raise ValueError("No 'databases' in config!")
 
     @staticmethod
-    def configure_database(db_config) -> database_abc.DatabaseABC:
+    def configure_database(db_config: dict) -> database_abc.DatabaseABC:
         """Database factory. Generates databases from config.
 
         Calls specific database adaptor handlers and registers constructs to urlchecker
@@ -134,22 +136,7 @@ class ConfigReader:
             if db_config["type"] == "dbm.dumb":
                 return dbm_adaptor.DbmAdaptor.configure_from_dict(db_config["options"])
             elif db_config["type"] == "mongo":
-                options_copy = copy.deepcopy(db_config["options"])
-                try:
-                    options_copy["connection_string"] = os.environ[
-                        db_config["options"]["connection_string"]
-                    ]
-                    options_copy["username"] = os.environ[
-                        db_config["options"]["username"]
-                    ]
-                    options_copy["password"] = os.environ[
-                        db_config["options"]["password"]
-                    ]
-                except KeyError as e:
-                    logger.error(
-                        "Could not read environment variables or username/password missing",
-                        exc_info=e,
-                    )
-                    raise ValueError("Issue with mongo database configuration")
-                return mongo_adaptor.MongoAdaptor.configure_from_dict(options_copy)
+                return mongo_adaptor.MongoAdaptor.configure_from_dict(
+                    db_config["options"]
+                )
         raise ValueError(f"{db_config['type']} is not a recognized database type")

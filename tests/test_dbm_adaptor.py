@@ -18,7 +18,7 @@ class TestDbmCheckMalware(unittest.TestCase):
         rmTempDB(self)
 
     def test_malware_exists(self):
-        """Check returns True when record exists"""
+        """Check returns "unsafe" when url is in malware database"""
         db = dbm_adaptor.DbmAdaptor("tmp/tmp")
         self.assertEqual(db.check_url_has_malware("www.evil.com")[0], "unsafe")
         self.assertEqual(
@@ -28,7 +28,7 @@ class TestDbmCheckMalware(unittest.TestCase):
         del db
 
     def test_malware_not_exists(self):
-        """Check should return False when records to not exist in db"""
+        """Check should return "safe" when records to not exist in db"""
         db = dbm_adaptor.DbmAdaptor("tmp/tmp")
         self.assertEqual(db.check_url_has_malware("www.good.com")[0], "safe")
         self.assertEqual(

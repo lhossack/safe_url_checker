@@ -3,7 +3,10 @@ import typing
 
 
 class RamDbAdaptor(database_abc.DatabaseABC):
-    """RAM based malware database"""
+    """RAM based malware database,
+
+    Currently used for stubbing a database for tests, but could support production usage if configuration is developed
+    """
 
     def __init__(self) -> None:
         super().__init__()

@@ -20,7 +20,7 @@ class DatabaseABC(metaclass=abc.ABCMeta):
         www.google.com:443/search/path?query=1&here=2
 
         :param str host_and_query: Host and query
-        :return: True if URL found to have malware in this database, False otherwise
+        :return: ("unsafe", "reason") if URL found to have malware in this database, ("safe", "") otherwise
         :rtype: bool
         """
         raise NotImplementedError
