@@ -17,7 +17,12 @@ def get_evil_urls():
         os.path.abspath(os.path.dirname(__file__)), "..", "sample_resources"
     )
     evil_urls = []
-    for filename in ["sample.txt", "unsafe_urls.txt"]:
+    for filename in [
+        "sample.txt",
+        "unsafe_urls.txt",
+        "mongo_sample.txt",
+        "mongo_unsafe_urls.txt",
+    ]:
         with open(os.path.join(sample_dir, filename), "r") as fin:
             urls = fin.readlines()
         evil_urls.extend([x.strip() for x in urls])
