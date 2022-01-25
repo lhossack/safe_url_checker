@@ -5,6 +5,7 @@ import unittest
 import unittest.mock
 import os
 from urlchecker.database_abc import DatabaseABC
+from urlchecker.mongo_adaptor import MongoAdaptor
 from utils import mkTempDB, rmTempDB
 import dbm.dumb
 
@@ -108,8 +109,8 @@ class TestConfigReaderParser(unittest.TestCase):
             cfg_reader.configure()
 
 
-class TestConfigureDatabaseParser(unittest.TestCase):
-    """Test database specific parsing"""
+class TestConfigureDbmDatabaseParser(unittest.TestCase):
+    """Test database specific parsing (dbm)"""
 
     def setUp(self) -> None:
         mkTempDB(self)
@@ -172,6 +173,34 @@ class TestConfigureDatabaseParser(unittest.TestCase):
         )
         with self.assertRaises(Exception):
             cfg.configure_all_databases()
+
+
+class TestConfigureDatabaseParser(unittest.TestCase):
+    """Test database specific parsing"""
+
+    def test_db_mongo(self):
+        """Test mongo config parser"""
+        os.environ["MONGO_URI_21"] = "uri-filler"
+        os.environ["MONGO_USERNAME_21"] = "username-filler"
+        os.environ["MONGO_PASSWORD_21"] = "password-filler"
+        cfg = config_reader.ConfigReader(
+            {
+                "databases": [
+                    {
+                        "type": "mongo",
+                        "options": {
+                            "connection_string": "MONGO_URI_21",
+                            "username": "MONGO_USERNAME_21",
+                            "password": "MONGO_PASSWORD_21",
+                            "database": "urlinfo_sample",
+                            "collection": "urlinfo_sample",
+                        },
+                    }
+                ]
+            }
+        )
+        databases = cfg.configure_all_databases()
+        self.assertTrue(isinstance(databases[0], MongoAdaptor))
 
 
 if __name__ == "__main__":

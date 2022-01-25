@@ -1,12 +1,13 @@
 """
 Defines config file parsing rules
 """
+import copy
 import json
 import os
 import logging
 import typing
 import dbm_adaptor
-from urlchecker import urlchecker
+from urlchecker import mongo_adaptor, urlchecker
 import database_abc
 
 logger = logging.getLogger(__name__)
@@ -132,4 +133,23 @@ class ConfigReader:
         if "type" in db_config and type(db_config["type"]) == str:
             if db_config["type"] == "dbm.dumb":
                 return dbm_adaptor.DbmAdaptor.configure_from_dict(db_config["options"])
+            elif db_config["type"] == "mongo":
+                options_copy = copy.deepcopy(db_config["options"])
+                try:
+                    options_copy["connection_string"] = os.environ[
+                        db_config["options"]["connection_string"]
+                    ]
+                    options_copy["username"] = os.environ[
+                        db_config["options"]["username"]
+                    ]
+                    options_copy["password"] = os.environ[
+                        db_config["options"]["password"]
+                    ]
+                except KeyError as e:
+                    logger.error(
+                        "Could not read environment variables or username/password missing",
+                        exc_info=e,
+                    )
+                    raise ValueError("Issue with mongo database configuration")
+                return mongo_adaptor.MongoAdaptor.configure_from_dict(options_copy)
         raise ValueError(f"{db_config['type']} is not a recognized database type")

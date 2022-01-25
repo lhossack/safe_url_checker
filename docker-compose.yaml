@@ -7,6 +7,10 @@ services:
       - "8000:8000"
     networks:
       - privatenet
+    environment:
+      MONGO_USERNAME_22: root
+      MONGO_PASSWORD_22: example
+      MONGO_URI_22: 'mongodb://mongo:27017/'
 
   mongo:
     image: mongo

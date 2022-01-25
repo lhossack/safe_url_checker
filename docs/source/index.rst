@@ -155,10 +155,28 @@ There are some different database adaptors, and each has their own configuration
         }
     }
 
-Note: Some configurations in the configuration file may specify that information is stored in an 
-environment variable. This is useful for things like usernames/ passwords, or other items
-that need to be securely stored or managed. These can be injected into docker containers 
-at run time, allowing them to be stored in secure locations and rotated relatively easily.
+"mongo" databases have 5 required options:
+
+- connection_string: environment variable - the name of the environment variable which contains the URI address of the mongo server this database is hosted on
+- username: environment variable - the name of the environment variable which contains the username for this server
+- password: environment variable - the name of the environment variable which contains the password for this server
+- database: string - database name
+- collection: string - collection name
+
+.. code-block:: JSON
+
+    {
+        "type": "mongo",
+        "options": {
+            "connection_string": "MONGO_URI_22",
+            "username": "MONGO_USERNAME_22",  
+            "password": "MONGO_PASSWORD_22",
+            "database": "urlinfo_sample",
+            "collection": "urlinfo_sample",
+        }
+    }
+
+Note: The recommended way to use the username/ password fields is to inject the environment variables into the environment/ container at run time, allowing them to be stored in secure locations and rotated relatively easily.
 
 
 API Documentation

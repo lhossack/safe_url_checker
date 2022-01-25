@@ -55,7 +55,7 @@ class TestUrlInfoService(unittest.TestCase):
             response = requests.get(self.prefix + url)
             self.assertEqual(response.json()["status"], "safe")
 
-    def test_valid_api_endpoint(self):
+    def test_invalid_api_endpoint(self):
         """Verify service responds with error on other endpoints"""
         response = requests.get(self.prefix + "/notvalid")
         self.assertEqual(response.json()["status"], "unknown")

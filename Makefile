@@ -36,8 +36,11 @@ validate: init
 
 devserver: init
 	@echo "\nStarting development server"
+	export MONGO_URI_22='mongodb://localhost:27017/' &&\
+	export MONGO_USERNAME_22='root' &&\
+	export MONGO_PASSWORD_22='example' &&\
 	export FLASK_APP="flask_frontend:create_app" &&\
-	export FLASK_ENV=development &&\
+	export FLASK_ENV='development' &&\
 	${VENV}/bin/flask run
 
 build: init

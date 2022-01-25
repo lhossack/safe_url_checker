@@ -13,6 +13,26 @@
                 "filename": "unsafe",
                 "reload_time": 10
             }
+        },
+        {
+            "type": "mongo",
+            "options": {
+                "connection_string": "MONGO_URI_22",
+                "username": "MONGO_USERNAME_22",
+                "password": "MONGO_PASSWORD_22",
+                "database": "urlinfo_sample",
+                "collection": "urlinfo_sample"
+            }
+        },
+        {
+            "type": "mongo",
+            "options": {
+                "connection_string": "MONGO_URI_22",
+                "username": "MONGO_USERNAME_22",
+                "password": "MONGO_PASSWORD_22",
+                "database": "urlinfo_unsafe",
+                "collection": "urlinfo_unsafe"
+            }
         }
     ]
 }

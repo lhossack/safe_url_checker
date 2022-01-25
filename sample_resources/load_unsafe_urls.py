@@ -86,7 +86,7 @@ if __name__ == "__main__":
         create_mongo_database(
             source="mongo_unsafe_urls.txt",
             dest="urlinfo_unsafe",
-            reason="known malware, confirmed from mongo!",
+            reason="suspected malware, admin blocking",
             conn="mongodb://localhost:27017/",
             username="root",
             password="example",
