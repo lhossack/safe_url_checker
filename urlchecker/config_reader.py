@@ -87,7 +87,6 @@ class ConfigReader:
         """
         databases = self.configure_all_databases()
 
-        # TODO: UrlChecker config options from config file?
         self.urlchecker = urlchecker.UrlChecker(databases=databases)
 
     def configure_all_databases(self) -> typing.List[database_abc.DatabaseABC]:

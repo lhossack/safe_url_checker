@@ -30,9 +30,8 @@ test: init
 	@echo "\nRunning Unit Tests"
 	${VENV}/bin/python3 -m unittest discover -s ${MAKEPATH}/tests || true
 
-test_validation: init
+validate: init
 	@echo "\nRunning Unit Tests"
-	export URLINFO_SERVER=http://localhost:5000 &&\
 	${VENV}/bin/python3 -m unittest discover -s ${MAKEPATH}/tests_validation || true
 
 devserver: init
@@ -43,7 +42,11 @@ devserver: init
 
 build: init
 	@echo "\nGenerating build"
-	@echo 'make  build not yet implemented - to build packages in setup.py'
+	docker build -t urlinfo ${MAKEPATH}
+
+prodserver: build
+	@echo "\nRunning Sample Prod server"
+	docker run -p 8000:8000 -e URLINFO_LOGLEVEL=WARNING urlinfo
 
 docs: init
 	@echo "\nGenerating docs"
@@ -54,8 +57,9 @@ clean:
 	@echo 'It is disabled for now. Please verify your config.'
 	@echo 'MAKEPATH='${MAKEPATH}
 	# rm -rf ${VENV}
-	# find ${MAKEPATH} -type f -name '*.pyc' -delete
+	# find ${MAKEPATH} -type f -name '*.py[co]' -delete
+	# find ${MAKEPATH} -type d -name '*.egg-info' -delete
 	# find ${MAKEPATH} -type d -name '__pycache__' -delete
 	# @echo 'Add build artifact & docs cleanup'
 
-.PHONY: all init devserver test build docs clean
+.PHONY: all init devserver prodserver test build docs clean

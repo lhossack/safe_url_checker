@@ -46,6 +46,8 @@ Note that this does not activate the venv in your current shell.
 
 `make docs` to build the sphinx documentation (html)
 
+`make validate URLINFO_SERVER=http://localhost:5000` to run validation tests against the endpoint at http://localhost:5000 (enter server to validate modified)
+
 ### Manually setting up your virtual environment
 It is recommended that you work in a virtual environment to keep project dependencies separated.
 See the section below on "Using virtual environments" if you are unfamiliar with virtual environments.
@@ -92,8 +94,26 @@ export FLASK_ENV=development
 This will allow you to use flask's debug features in the browser and on the command line.
 To learn more, visit the flask documentation.
 
-### Building a release package (docker)
-#TODO
+### Running the Sample Production Server/ Building a docker image
+Note: Please see ["Deployment Quickstart" and "Deployment - Advanced"](http://urlinfo-project-safeurlchecker-docs-sphinx-4312lkj1234.s3-website.ca-central-1.amazonaws.com#deployment-quickstart) for information regarding what should be customized for a docker build.
+
+To run build and run the sample production server, you need at least docker. If you also have docker-compose, run:
+```docker-compose up```
+
+The server will be available at localhost:8000.
+
+Without docker compose, using make:
+To build the default release package, run:
+```make build```
+
+And to build and run, 
+```make prodserver```
+
+Or manually:
+```
+docker build -t urlinfo .
+docker run -p 8000:8000 -e URLINFO_LOGLEVEL=WARNING urlinfo
+```
 
 ### Running Validation Tests
 Validation tests are stored in tests_validation and require some setup.
@@ -112,17 +132,14 @@ There is an environment variable to set in the 'validation test' shell when runn
 
 In the validation shell, 
 
-```make test_validation``` 
+```make validate URLINFO_SERVER=http://localhost:5000``` 
 
 or manually,
 
 ```
-cd tests_validation
-python3 test_server.py
+export URLINFO_SERVER=http://localhost:5000
+python3 tests_validation/test_server.py
 ```
-
-will run the tests.
-
 
 
 ## Release Process

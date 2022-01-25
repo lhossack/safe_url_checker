@@ -35,7 +35,8 @@ class UrlChecker:
         :return (status, reason): status is "unsafe", "unknown" or "safe". Reason describes justification from tools populating the database.
         :rtype: typing.Tuple[str, str]
         """
-        # TODO: parallelize calls to several dbs
+        # TODO: potentialy parallelize calls to several dbs, current method will block on each access sequentially
+        # TODO: ^ needs profiling under load conditions similar to production, this won't matter if process is or becomes cpu bound
         try:
             parsed_query = parse.urlparse("http://" + host_and_query)
         except ValueError:
