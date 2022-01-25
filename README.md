@@ -16,9 +16,9 @@ That is, it ensures all registered databases have been checked before returning 
 
 The configuration object is also of significant note as it plays a key role during startup.
 
-The API frameworks (flask) play a minimal role in the execution or control flow of the business logic and should be kept separate.
+The API frameworks (flask) are intended to play a minimal role in the execution or control flow of the business logic and should be kept separate in case they are to be swapped out. This could happen for example if there was a decision to change to using a serverless model such as AWS Lambda.
 
-Similarly, the backing stores are responsible for ensuring inputs are not dangerous to their own systems and must obey the "interface" defined by database_abc.DatabaseABC to be registered to the app.
+Similarly, the backing stores are responsible for ensuring inputs are not dangerous to their own systems (e.g. SQL injection due to lack of parameterized queries) and must obey the "interface" defined by database_abc.DatabaseABC to be registered to the app.
 
 ### Using the Makefile
 If you have make installed, there are make commands available for most common operations.
@@ -40,13 +40,15 @@ Note that this does not activate the venv in your current shell.
 
 `make test` run test discovery (all unit and integration tests)
 
+`make validate URLINFO_SERVER=http://localhost:5000` to run validation tests against the endpoint at http://localhost:5000 (enter the server to validate)
+
 `make devserver` to run the flask development server
 
 `make build` to generate a build package (docker image)
 
-`make docs` to build the sphinx documentation (html)
+`make prodserver` to generate a build package consisting of a sample server linked to mongo and dbm.
 
-`make validate URLINFO_SERVER=http://localhost:5000` to run validation tests against the endpoint at http://localhost:5000 (enter server to validate modified)
+`make docs` to build the sphinx documentation (html)
 
 ### Manually setting up your virtual environment
 It is recommended that you work in a virtual environment to keep project dependencies separated.
@@ -94,43 +96,52 @@ export FLASK_ENV=development
 This will allow you to use flask's debug features in the browser and on the command line.
 To learn more, visit the flask documentation.
 
+
+### Connecting urlinfo to MongoDB instances:
+Note: If your configuration file defines mongo databases, to access them from the development server, export the connection environment variables also:
+
+```
+export MONGO_URI_22='mongodb://localhost:27017/' &&\
+export MONGO_USERNAME_22='root' &&\
+export MONGO_PASSWORD_22='example' &&\
+```
+
+These are the example environment variables. Check your configuration file to to see which environment variables you need to modify.
+
+Please see the ["Configuration Docs"](http://urlinfo-project-safeurlchecker-docs-sphinx-4312lkj1234.s3-website.ca-central-1.amazonaws.com#configuration) for more information about the configuration file.
+
 ### Running the Sample Production Server/ Building a docker image
 Note: Please see ["Deployment Quickstart" and "Deployment - Advanced"](http://urlinfo-project-safeurlchecker-docs-sphinx-4312lkj1234.s3-website.ca-central-1.amazonaws.com#deployment-quickstart) for information regarding what should be customized for a docker build.
 
-To run build and run the sample production server, you need at least docker. If you also have docker-compose, run:
-```docker-compose up```
+To run build and run the sample production server, make is the easiest way to deploy:
+```make prodserver```
 
 The server will be available at localhost:8000.
 
-Without docker compose, using make:
-To build the default release package, run:
-```make build```
+Otherwise, you can use docker-compose:
 
-And to build and run, 
-```make prodserver```
-
-Or manually:
 ```
-docker build -t urlinfo .
-docker run -p 8000:8000 -e URLINFO_LOGLEVEL=WARNING urlinfo
+docker-compose build
+docker-compose up -d
+python3 sample_resources/load_unsafe_urls.py
 ```
 
 ### Running Validation Tests
 Validation tests are stored in tests_validation and require some setup.
 
-First, a server must be running, and that server is required to have either copies of or access to the sample_resources dbm databases. These databases contain URLs which are tested against for validation.
+First, a server must be running, and that server is required to have either copies of or access to the sample_resources dbm databases and access and configuration for any mongodb instances. These databases contain URLs which are tested against for validation.
 
-The server must be running to test against it. Running the flask development server as described in 
-"Running the Development Server" above, with `URLINFO_CONFIG` unset or pointing to 
+The server must be running to run the validation tests against it. Running the flask development server as described in 
+"Running the Sample Production Server" above, with `URLINFO_CONFIG` unset or pointing to 
 `../sample_resources/default_config.json` will cause it to acquire the required sample databases.
 
-Prepare a separate shell to run the validation tester.
+Prepare a separate shell to run the validation tester by navigating to the project root and activating your virtual environment.
 
 There is an environment variable to set in the 'validation test' shell when running the validation tests:
 
    - `URLINFO_SERVER` defines the server's location. It must include schema, host and port. e.g. `http://localhost:5000` with no trailing '/'. This should be exported in the shell that the validation tests are being run from.
 
-In the validation shell, 
+In the validation shell, run: 
 
 ```make validate URLINFO_SERVER=http://localhost:5000``` 
 
@@ -145,7 +156,7 @@ python3 tests_validation/test_server.py
 ## Release Process
 For a release to go to test:
 - All code changes need to go through final review before being merged.
-- All unit and integration tests must be passing. #TODO automate this with CI
+- All unit and integration tests must be passing. #TODO automate these checks in CI
 - All documentation must be up to date and building, including version information.
 - All end to end tests must be passing on sandbox environments.
 - #TODO: Static analysis tools are not yet incorporated into the workflow, but they will also be required to pass
@@ -164,8 +175,8 @@ If you would like to contribute, please feel free to fork and create a pull requ
 
 ## Customization for deployment scenarios
 Frameworks and databases are implemented as adaptors so that new adaptors can easily replace old ones.
-If you intend to deploy this to AWS lambda, for example, you can create a new framework adaptor for lambda 
-to replace the flask one and select it in the configuration.
+If you intend to deploy this to AWS lambda, for example, you can create a new entry point (handler) for lambda 
+to replace the flask one.
 You can also use any database or database service by creating an adaptor for it by subclassing database_abc.DatabaseABC and registering it to the urlchecker instance.
 
 ## Using virtual environments
