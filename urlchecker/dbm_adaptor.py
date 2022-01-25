@@ -90,7 +90,7 @@ class DbmAdaptor(DatabaseABC):
 
         def close(db, filename):
             db.close()
-            logger.info(f"Database (dbm) closed: {self.filename}")
+            logger.info(f"Database (dbm) closed: {filename}")
 
         weakref.finalize(
             self, close, self.db, self.filename

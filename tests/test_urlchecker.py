@@ -41,6 +41,26 @@ class TestUrlCheckerHasMalware(unittest.TestCase):
         self.assertEqual(checker.check_url_has_malware("good.com")[0], "safe")
         self.assertEqual(checker.check_url_has_malware("good.com/path")[0], "safe")
 
+    def test_host_path_subquery_reporting(self):
+        """Check malware is reported if path or hostname:port matches but full url doesn't"""
+        checker = urlchecker.UrlChecker()
+
+        mem_db = ram_db_adaptor.RamDbAdaptor()
+        mem_db.add_malware_url("example.com:80")
+        mem_db.add_malware_url("sample.ca:80/path/to/here")
+        checker.register_database(mem_db)
+
+        self.assertEqual(
+            checker.check_url_has_malware("example.com:80/some/extra/path")[0], "unsafe"
+        )
+
+        self.assertEqual(
+            checker.check_url_has_malware(
+                "sample.ca:80/path/to/here?and=a&query=string"
+            )[0],
+            "unsafe",
+        )
+
     def test_multiple_db(self):
         """Check malware is reported if it is in any database, and not reported otherwise"""
         checker = urlchecker.UrlChecker()
@@ -68,7 +88,7 @@ class TestUrlCheckerHasMalware(unittest.TestCase):
 
         self.assertEqual(checker.check_url_has_malware("good.com")[0], "safe")
         self.assertEqual(
-            checker.check_url_has_malware("lucifer.com/good_path")[0], "safe"
+            checker.check_url_has_malware("lucifer.com/good_path")[0], "unsafe"
         )
 
 

@@ -1,6 +1,5 @@
-from logging import handlers
-import os
 import config_reader
+import os
 
 import werkzeug
 from flask import Flask, request, jsonify
@@ -22,7 +21,7 @@ dictConfig(
         "version": 1,
         "formatters": {
             "default": {
-                "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+                "format": "%(asctime)s %(levelname)s %(module)s: %(message)s",
             }
         },
         "handlers": {
@@ -52,6 +51,7 @@ def create_app(test_config=None):
     once done with flask-specific code to handle IO
     """
     app = Flask(__name__)
+
     urlchecker_cfg = config_reader.ConfigReader()
     urlchecker_cfg.configure()
     urlchecker = urlchecker_cfg.urlchecker
@@ -66,7 +66,7 @@ def create_app(test_config=None):
     @app.errorhandler(Exception)
     def handle_error(e):
         """Return error for anything other than urlinfo/1/ route, or on any unhandled exception"""
-        print(e)
+        app.logger.exception(f"Application exception: {e.code}", exc_info=e)
         try:
             return (jsonify({"status": "unknown", "reason": "invalid request"}), e.code)
         except:

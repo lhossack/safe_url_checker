@@ -35,15 +35,20 @@ class UrlChecker:
         :return (status, reason): status is "unsafe", "unknown" or "safe". Reason describes justification from tools populating the database.
         :rtype: typing.Tuple[str, str]
         """
-        # TODO: Check hostname+port AND full url (make it easy to optionally block a full domain, or specific path)
         # TODO: parallelize calls to several dbs
-        # parse.urlparse()
-        for db in self._databases:
-            result, reason = db.check_url_has_malware(host_and_query)
-            if result == "unsafe":
-                return ("unsafe", reason)
+        parsed_query = parse.urlparse("http://" + host_and_query)
+        search_queries = [
+            parsed_query.netloc,
+            str(parsed_query.netloc) + parsed_query.path,
+            str(parsed_query.netloc) + parsed_query.path + "?" + parsed_query.query,
+        ]
+        logger.debug(search_queries)
+        for query in search_queries:
+            for db in self._databases:
+                result, reason = db.check_url_has_malware(query)
+                if result == "unsafe":
+                    return ("unsafe", reason)
 
-        logger.info(host_and_query)
         return ("safe", "")
 
     def register_database(self, database: DatabaseABC) -> None:
