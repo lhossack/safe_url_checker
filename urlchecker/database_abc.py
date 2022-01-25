@@ -25,6 +25,27 @@ class DatabaseABC(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
+    def check_any_url_has_malware(
+        self, urls: typing.Iterable[str]
+    ) -> typing.Tuple[str, str]:
+        """Checks if url in urls is known to have malware
+
+        Input query strings are of the form: "{hostname_and_port}/{original_path_and_query_string}".
+        That is, they don't contain the protocol (e.g. "https://" is trimmed), but do include
+        ports: e.g. https://www.google.com/search/path?query=1&here=2 should be passed in as
+        www.google.com:443/search/path?query=1&here=2
+
+        :param host_and_query: List of urls to check against the database.
+        :type host_and_query: typing.Iterable[str]
+        :return: ("unsafe", "malware") if *any* URL in urls found to have malware in this database, ("safe", "") otherwise
+        :rtype: bool
+        """
+        for url in urls:
+            response = self.check_url_has_malware(url)
+            if response[0] == "unsafe":
+                return response
+        return ("safe", "")
+
     @abc.abstractclassmethod
     def configure_from_dict(cls, options) -> DatabaseAbcT:
         """Initialize and return a new database adaptor from a configuration dictionary

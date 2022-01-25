@@ -59,10 +59,7 @@ class DbmAdaptor(DatabaseABC):
             byte_key = host_and_query.encode(encoding="utf-8", errors="strict")
         except ValueError:
             logger.info(f"Failed to encode URL: {host_and_query}")
-            return (
-                "unknown",
-                "failed to encode",
-            )
+            return ("unknown", "failed to encode")
 
         if byte_key in self.db:
             return ("unsafe", self.db[byte_key].decode("utf-8"))

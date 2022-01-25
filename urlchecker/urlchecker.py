@@ -42,17 +42,20 @@ class UrlChecker:
         except ValueError:
             logger.info(f"Failed to parse {host_and_query}")
             return ("unsafe", "could not parse url")
-        search_queries = [
-            parsed_query.netloc,
-            str(parsed_query.netloc) + parsed_query.path,
-            str(parsed_query.netloc) + parsed_query.path + "?" + parsed_query.query,
-        ]
+
+        search_queries = [parsed_query.netloc]
+        if parsed_query.path:
+            search_queries.append(str(parsed_query.netloc) + parsed_query.path)
+        if parsed_query.query:
+            search_queries.append(
+                str(parsed_query.netloc) + parsed_query.path + "?" + parsed_query.query
+            )
         logger.debug(search_queries)
-        for query in search_queries:
-            for db in self._databases:
-                result, reason = db.check_url_has_malware(query)
-                if result == "unsafe":
-                    return ("unsafe", reason)
+
+        for db in self._databases:
+            result, reason = db.check_any_url_has_malware(search_queries)
+            if result == "unsafe":
+                return ("unsafe", reason)
 
         return ("safe", "")
 
