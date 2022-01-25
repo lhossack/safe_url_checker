@@ -36,7 +36,11 @@ class UrlChecker:
         :rtype: typing.Tuple[str, str]
         """
         # TODO: parallelize calls to several dbs
-        parsed_query = parse.urlparse("http://" + host_and_query)
+        try:
+            parsed_query = parse.urlparse("http://" + host_and_query)
+        except ValueError:
+            logger.info(f"Failed to parse {host_and_query}")
+            return ("unsafe", "could not parse url")
         search_queries = [
             parsed_query.netloc,
             str(parsed_query.netloc) + parsed_query.path,
