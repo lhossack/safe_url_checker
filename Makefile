@@ -47,9 +47,14 @@ build: init
 	@echo "\nGenerating build"
 	docker build -t urlinfo ${MAKEPATH}
 
-prodserver: build
+prodserver: init
 	@echo "\nRunning Sample Prod server"
-	docker run -p 8000:8000 -e URLINFO_LOGLEVEL=WARNING urlinfo
+	docker-compose build &&\
+	docker-compose up -d &&\
+	${VENV}/bin/python3 sample_resources/load_unsafe_urls.py
+	@echo "You can access the sample production API at http://localhost:8000/urlinfo/1/"
+	@echo "Example usage (non malicious url): http://localhost:8000/urlinfo/1/www.facebook.com:443/messages/t/62132"
+	@echo "Example usage (malicious url): http://localhost:8000/urlinfo/1/evil.com:80"
 
 docs: init
 	@echo "\nGenerating docs"

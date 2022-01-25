@@ -1,7 +1,8 @@
 """mongo adaptor for url malware lookup database"""
 from urlchecker.database_abc import DatabaseABC, DatabaseAbcT
 import typing
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
+import pymongo
 
 import logging
 
@@ -75,5 +76,5 @@ class MongoAdaptor(DatabaseABC):
         cursor = self.collection.find({"url": {"$in": urls}})
         try:
             return ("unsafe", str(cursor[0]["reason"]))
-        except IndexError:
+        except (IndexError, errors.InvalidOperation):
             return ("safe", "")

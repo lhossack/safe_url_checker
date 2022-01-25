@@ -62,9 +62,12 @@ def create_mongo_database(
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(__file__))
+    print("Creating dbm databases..", end=" ")
     create_dbm_database("unsafe_urls.txt", "unsafe", b"unsafe")
     create_dbm_database("sample.txt", "sample", b"known malware")
+    print("Done.")
 
+    print("Creating mongo databases..", end=" ")
     if (
         "MONGO_INITDB_ROOT_USERNAME" in os.environ
         and "MONGO_INITDB_ROOT_PASSWORD" in os.environ
@@ -98,3 +101,4 @@ if __name__ == "__main__":
             "\tMONGO_INITDB_ROOT_USERNAME=<your-mongo-username>\n"
             "\tMONGO_INITDB_ROOT_PASSWORD=<your-mongo-password>"
         )
+    print("Done.")
