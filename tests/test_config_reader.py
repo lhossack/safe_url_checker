@@ -30,7 +30,7 @@ class TestConfigReader(unittest.TestCase):
         os.makedirs(tmpdir, exist_ok=True)
         tmpfile = os.path.join(tmpdir, "config.json")
         try:
-            os.environ["URLCHECK_CONFIG_PATH"] = os.path.abspath(tmpfile)
+            os.environ["URLINFO_CONFIG"] = os.path.abspath(tmpfile)
             with open(tmpfile, "w") as conf:
                 json.dump({"databases": []}, conf)
             cfg_reader = config_reader.ConfigReader()
@@ -38,18 +38,18 @@ class TestConfigReader(unittest.TestCase):
             self.assertEqual(config_src, "file")
             self.assertTrue(os.path.samefile(tmpfile, filename))
         finally:
-            del os.environ["URLCHECK_CONFIG_PATH"]
+            del os.environ["URLINFO_CONFIG"]
             shutil.rmtree(tmpdir)
 
     def test_bad_path_environ(self):
         """Test config fails to load and raises exception when pointed at a non existent path"""
         tmpfile = os.path.join(os.path.dirname(__file__), "tmp/nonexistent/path")
         try:
-            os.environ["URLCHECK_CONFIG_PATH"] = os.path.abspath(tmpfile)
+            os.environ["URLINFO_CONFIG"] = os.path.abspath(tmpfile)
             with self.assertRaises(OSError):
                 cfg_reader = config_reader.ConfigReader()
         finally:
-            del os.environ["URLCHECK_CONFIG_PATH"]
+            del os.environ["URLINFO_CONFIG"]
 
     def test_relative_path_environ(self):
         """Test ConfigReader properly handles relative paths to config files"""
@@ -83,13 +83,13 @@ class TestConfigReader(unittest.TestCase):
         rel_path = os.path.relpath(cfg_path, os.path.dirname(config_reader.__file__))
 
         try:
-            os.environ["URLCHECK_CONFIG_PATH"] = rel_path
+            os.environ["URLINFO_CONFIG"] = rel_path
             cfg_reader = config_reader.ConfigReader()
             dbs = cfg_reader.configure_all_databases()
             self.assertEqual(len(dbs), 1)
             self.assertTrue(issubclass(type(dbs[0]), DatabaseABC))
         finally:
-            del os.environ["URLCHECK_CONFIG_PATH"]
+            del os.environ["URLINFO_CONFIG"]
             os.chdir(startdir)
             shutil.rmtree(cfg_dir_path)
 

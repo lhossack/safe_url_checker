@@ -101,7 +101,7 @@ Validation tests are stored in tests_validation and require some setup.
 First, a server must be running, and that server is required to have either copies of or access to the sample_resources dbm databases. These databases contain URLs which are tested against for validation.
 
 The server must be running to test against it. Running the flask development server as described in 
-"Running the Development Server" above, with `URLCHECK_CONFIG_PATH` unset or pointing to 
+"Running the Development Server" above, with `URLINFO_CONFIG` unset or pointing to 
 `../sample_resources/default_config.json` will cause it to acquire the required sample databases.
 
 Prepare a separate shell to run the validation tester.

@@ -16,7 +16,7 @@ class ConfigReader:
     """Startup configuration reader
 
     Configuration defaults to read from same directory as config_reader.py
-    Override this behaviour by exporting the environment variable "URLCHECK_CONFIG_PATH"
+    Override this behaviour by exporting the environment variable "URLINFO_CONFIG"
     or providing a configuration dictionary directly.
 
     See sphinx docs for a description of permissible configuration.
@@ -40,14 +40,14 @@ class ConfigReader:
             logger.info(f"Using dictionary config..")
             self.config = config
         else:
-            if "URLCHECK_CONFIG_PATH" in os.environ:
-                self.config_file = os.environ["URLCHECK_CONFIG_PATH"]
+            if "URLINFO_CONFIG" in os.environ:
+                self.config_file = os.environ["URLINFO_CONFIG"]
             else:
                 self.config_file = "../sample_resources/default_config.json"
             self.config = self.load_from_file()
 
     def load_from_file(self):
-        """Load configuration from file (default or in os.environ["URLCHECK_CONFIG_PATH"])
+        """Load configuration from file (default or in os.environ["URLINFO_CONFIG"])
 
         :return: configuration dict from file
         :rtype: dict
