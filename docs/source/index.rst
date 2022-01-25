@@ -52,7 +52,7 @@ You can then access the endpoint at `http://localhost:8000/urlinfo/1/` from the 
 
 For example, you can try entering: 
 
-- `http://localhost:8000/urlinfo/1/www.facebook.com/messages/t/62132`, or
+- `http://localhost:8000/urlinfo/1/www.facebook.com:443/messages/t/62132`, or
 - `http://localhost:8000/urlinfo/1/evil.com:80`
 
 in your browser, which should yeild a "safe" and "unsafe" response respectively.

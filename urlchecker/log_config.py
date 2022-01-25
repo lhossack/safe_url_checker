@@ -47,4 +47,3 @@ dictConfig(
         "root": {"level": LOGLEVEL, "handlers": ["wsgi"]},
     }
 )
-print(f" ** Log level: {LOGLEVEL}")

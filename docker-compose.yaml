@@ -2,12 +2,35 @@ version: "3.9"
 services:
   urlinfo:
     build: .
+    restart: always
     ports:
       - "8000:8000"
     networks:
       - privatenet
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
     environment:
-      - name=value
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - privatenet
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    networks:
+      - privatenet
+
 networks:
   privatenet:
     driver: bridge

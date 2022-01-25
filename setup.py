@@ -14,7 +14,7 @@ setuptools.setup(
     author="Lucas Hossack",
     package_dir={"": "urlchecker"},
     packages=setuptools.find_packages(where="urlchecker"),
-    install_requires=["flask>=2.0.0", "sphinx", "furo"],
+    install_requires=["Flask>=2.0.2", "pymongo==4.0.1", "sphinx==4.4.0", "furo==2022.1.2"],
     python_requires=">=3.6",
     classifiers=[
         "Development Status :: 4 - Beta",

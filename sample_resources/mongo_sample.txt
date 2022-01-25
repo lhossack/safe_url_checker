@@ -1,0 +1,6 @@
+mongo.evil.com:80
+mongo.prettyevil.com:80/path
+mongo.www.kindaevil.com:80
+mongo.sandbox.reallyevil.com:80/
+mongo.www.superevil.com:80/index.html?q=download+ram
+www.an-extra.com:443/example/that/doesnt/start/with/mongo

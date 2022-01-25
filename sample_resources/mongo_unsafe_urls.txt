@@ -1,0 +1,12 @@
+mongo.bad.com:80/
+mongo.bad.com:443/
+mongo.bad.com:8080
+mongo.en.wikipedia.org:443/wiki/National_Register_of_Historic_Places#/media/File:The_Robert_C._Weaver_Federal_
+mongo.en.wikipedia.org:443/wiki/Spanish%E2%80%93American_War
+mongo.www.google.com:443/doodles/doodle-4-google-2008-australia-winner
+mongo.tox.wiki:443/en/latest/example/unittest.html#running-unittest2-and-sphinx-tests-in-one-go
+mongo.learn.launchdarkly.com:443/forrester-wave/?utm_source=readthedocs&utm_medium=display&utm_campaign=21q2-readthedocs&utm_content=ebook_forrester_wave&ea-publisher=readthedocs
+mongo.github.com:443/lhossack/safe_url_checker
+mongo.sphinx-rtd-tutorial.readthedocs.io:443/en/latest/docstrings.html
+mongo.flask.palletsprojects.com:443/en/2.0.x/errorhandling/#returning-api-errors-as-json
+some-extra.url.com:22/for/mongo?test=no-start-with-mongo
